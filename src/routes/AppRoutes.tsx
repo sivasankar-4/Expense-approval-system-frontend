@@ -27,6 +27,7 @@ const AppRoutes = () => {
             <Route path="/reports" element={<ReportsPage/>} />
             <Route path="/users" element={<UsersPage/>} />
             <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/" element={<AuthLayout />}></Route>
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
