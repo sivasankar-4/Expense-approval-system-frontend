@@ -12,22 +12,39 @@ import { Button } from "@/components/ui/button";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { loginSchema } from "@/schemas/auth.schema";
 import type { LoginFormData } from "@/schemas/auth.schema";
+import { login } from "@/services/auth/authService";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const [loginError, setLoginError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log("Form Submitted");
-    console.log(data);
+  const onSubmit = async (data: LoginFormData) => {
+    setLoginError(null);
+
+    try {
+      const { accessToken, refreshToken, tokenType } = await login(data);
+
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("tokenType", tokenType);
+
+      navigate("/dashboard");
+    } catch {
+      setLoginError("Invalid email or password. Please try again.");
+    }
   };
 
   return (
@@ -98,9 +115,15 @@ const LoginPage = () => {
             </div>
 
             
-            <Button type="submit" className="w-full">
-              Sign In
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Signing In..." : "Sign In"}
             </Button>
+
+            {loginError && (
+              <p className="text-sm text-red-500" role="alert">
+                {loginError}
+              </p>
+            )}
           </form>
         </CardContent>
 
