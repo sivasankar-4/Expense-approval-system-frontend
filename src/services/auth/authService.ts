@@ -18,3 +18,9 @@ export const login = async (
 
   return response.data;
 };
+
+export const logout = (): void => {
+  localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("tokenType");
+};
