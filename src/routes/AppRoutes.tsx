@@ -9,6 +9,7 @@ import ReportsPage from "../pages/Reports/ReportsPage"
 import SettingsPage from "../pages/Settings/SettingsPage"
 import NotFoundPage from "../pages/NotFound/NotFoundPage"
 import UsersPage from "../pages/Users/UsersPage"
+import ProtectedRoute from "./ProtectedRoute"
 
 
 const AppRoutes = () => {
@@ -19,15 +20,15 @@ const AppRoutes = () => {
             <Route path="/login" element={<LoginPage />} />
         </Route>
 
-        <Route element ={<AppLayout />}>
-
-            <Route path="/dashboard" element={<DashboardPage />}/>
-            <Route path="/expenses" element={<ExpensesPage />} />
-            <Route path="/approvals" element={<ApprovalsPage />} />
-            <Route path="/reports" element={<ReportsPage/>} />
-            <Route path="/users" element={<UsersPage/>} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/" element={<AuthLayout />}></Route>
+        <Route element={<ProtectedRoute />}>
+            <Route element={<AppLayout />}>
+                <Route path="/dashboard" element={<DashboardPage />}/>
+                <Route path="/expenses" element={<ExpensesPage />} />
+                <Route path="/approvals" element={<ApprovalsPage />} />
+                <Route path="/reports" element={<ReportsPage/>} />
+                <Route path="/users" element={<UsersPage/>} />
+                <Route path="/settings" element={<SettingsPage />} />
+            </Route>    
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
