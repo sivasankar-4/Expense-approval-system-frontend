@@ -13,3 +13,10 @@ export interface Expense {
   tenantName: string;
   createdAt: string;
 }
+
+export interface CreateExpenseRequest {
+  amount: number;
+  currency: string;
+  category: string;
+  description: string;
+}
