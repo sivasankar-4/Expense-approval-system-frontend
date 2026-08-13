@@ -1,6 +1,9 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { ROLES } from "@/constants/roles";
 
 const Sidebar = () => {
+  const { role } = useAuth();
 
     return (
 
@@ -30,33 +33,42 @@ const Sidebar = () => {
             : "text-gray-500"
     }>Expenses</NavLink>
 
-        <p className="text-xs uppercase text-gray-500">
-          Approvals
-         </p>
-        <NavLink to="/approvals" className={({ isActive }) =>
-        isActive
-            ? "font-semibold text-black"
-            : "text-gray-500"
-    }>Approvals</NavLink>
+        { (role === ROLES.MANAGER || role === ROLES.FINANCE_ADMIN) && (
+          <>
+            <p className="text-xs uppercase text-gray-500">
+              Approvals
+            </p>
+            <NavLink to="/approvals" 
+              className={({ isActive }) =>
+                isActive ? "font-semibold text-black" : "text-gray-500"
+              }>
+              Approvals
+            </NavLink>
+          </>
+        ) }
 
-        <p className="text-xs uppercase text-gray-500">
-         Adminstration
-       </p>
-        <NavLink to="/reports" className={({ isActive }) =>
-        isActive
-            ? "font-semibold text-black"
-            : "text-gray-500"
-    }>Reports</NavLink>
-        <NavLink to="/users" className={({ isActive }) =>
-        isActive
-            ? "font-semibold text-black"
-            : "text-gray-500"
-    }>Users</NavLink>
-        <NavLink to="/settings" className={({ isActive }) =>
-        isActive
-            ? "font-semibold text-black"
-            : "text-gray-500"
-    }>Settings</NavLink>
+        { role === ROLES.FINANCE_ADMIN && (
+          <>
+            <p className="text-xs uppercase text-gray-500">
+              Administration
+            </p>
+            <NavLink to="/reports" className={({ isActive }) =>
+              isActive ? "font-semibold text-black" : "text-gray-500"
+            }>
+              Reports
+            </NavLink>
+            <NavLink to="/users" className={({ isActive }) =>
+              isActive ? "font-semibold text-black" : "text-gray-500"
+            }>
+              Users
+            </NavLink>
+            <NavLink to="/settings" className={({ isActive }) =>
+              isActive ? "font-semibold text-black" : "text-gray-500"
+            }>
+              Settings
+            </NavLink>
+          </>
+        ) }
       </nav>
         </aside>
     );
