@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { expenseService } from "@/services/expense/expenseService";
+import CreateExpenseForm from "@/services/expense/CreateExpenseForm";
 import type { Expense } from "@/types/expense";
 
 const ExpensesPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showCreateForm, setShowCreateForm] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.openCreateForm) {
+      setShowCreateForm(true);
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.pathname, location.state, navigate]);
 
   useEffect(() => {
     const fetchExpenses = async () => {
@@ -44,11 +56,30 @@ const ExpensesPage = () => {
 
         <button
           type="button"
+          onClick={() => setShowCreateForm(true)}
           className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
         >
           + New Expense
         </button>
       </div>
+
+      {showCreateForm && (
+        <div className="rounded-lg border bg-white p-6">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <h2 className="text-lg font-semibold">Create Expense</h2>
+
+            <button
+              type="button"
+              onClick={() => setShowCreateForm(false)}
+              className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+          </div>
+
+          <CreateExpenseForm />
+        </div>
+      )}
 
       {/* Expense List */}
       <div className="rounded-lg border bg-white">
@@ -127,7 +158,16 @@ const ExpensesPage = () => {
                 {expenses.map((expense) => (
                   <tr
                     key={expense.id}
-                    className="border-b last:border-0"
+                    onClick={() => navigate(`/expenses/${expense.id}`)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        navigate(`/expenses/${expense.id}`);
+                      }
+                    }}
+                    role="link"
+                    tabIndex={0}
+                    className="cursor-pointer border-b outline-none hover:bg-gray-50 focus-visible:bg-gray-50 last:border-0"
                   >
                     <td className="px-6 py-4">
                       {expense.description}
