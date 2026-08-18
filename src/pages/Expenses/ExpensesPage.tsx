@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { expenseService } from "@/services/expense/expenseService";
 import CreateExpenseForm from "@/services/expense/CreateExpenseForm";
 import type { Expense } from "@/types/expense";
+import { formatAmount, formatDate, statusLabels } from "@/utils/expenseUtils";
 
 const ExpensesPage = () => {
   const navigate = useNavigate();
@@ -40,16 +41,25 @@ const ExpensesPage = () => {
     fetchExpenses();
   }, []);
 
+  const darkGlassCardStyle = {
+    background: "rgba(20, 23, 31, 0.75)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+    borderRadius: "20px",
+  };
+
   return (
     <div className="space-y-8">
       {/* Page Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-3xl font-bold tracking-tight text-[#F5F6F5] [text-shadow:_0_2px_4px_rgba(0,0,0,0.5)]">
             Expenses
           </h1>
 
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm text-[#A1A1A4]">
             Manage and track your expense submissions.
           </p>
         </div>
@@ -57,21 +67,26 @@ const ExpensesPage = () => {
         <button
           type="button"
           onClick={() => setShowCreateForm(true)}
-          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+          className="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-black hover:opacity-90 transition-opacity shadow-md cursor-pointer"
         >
           + New Expense
         </button>
       </div>
 
       {showCreateForm && (
-        <div className="rounded-lg border bg-white p-6">
-          <div className="mb-6 flex items-center justify-between gap-4">
-            <h2 className="text-lg font-semibold">Create Expense</h2>
+        <div
+          className="p-6 overflow-hidden"
+          style={darkGlassCardStyle}
+        >
+          <div className="mb-6 flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+            <h2 className="text-lg font-bold text-[#F5F6F5] [text-shadow:_0_1px_3px_rgba(0,0,0,0.4)]">
+              Create Expense
+            </h2>
 
             <button
               type="button"
               onClick={() => setShowCreateForm(false)}
-              className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50"
+              className="rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold text-[#F5F6F5] hover:bg-white/20 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -82,13 +97,16 @@ const ExpensesPage = () => {
       )}
 
       {/* Expense List */}
-      <div className="rounded-lg border bg-white">
-        <div className="border-b p-6">
-          <h2 className="text-lg font-semibold">
+      <div
+        className="overflow-hidden"
+        style={darkGlassCardStyle}
+      >
+        <div className="border-b border-white/10 p-6">
+          <h2 className="text-lg font-bold text-[#F5F6F5] [text-shadow:_0_1px_3px_rgba(0,0,0,0.4)]">
             Expense List
           </h2>
 
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-[#A1A1A4]">
             View and track your submitted expenses.
           </p>
         </div>
@@ -96,7 +114,7 @@ const ExpensesPage = () => {
         {/* Loading */}
         {isLoading && (
           <div className="flex min-h-48 items-center justify-center p-6">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#A1A1A4]">
               Loading expenses...
             </p>
           </div>
@@ -105,7 +123,7 @@ const ExpensesPage = () => {
         {/* Error */}
         {!isLoading && error && (
           <div className="flex min-h-48 items-center justify-center p-6">
-            <p className="text-sm text-red-500">
+            <p className="text-sm text-red-400">
               {error}
             </p>
           </div>
@@ -115,11 +133,11 @@ const ExpensesPage = () => {
         {!isLoading && !error && expenses.length === 0 && (
           <div className="flex min-h-48 items-center justify-center p-6">
             <div className="text-center">
-              <h3 className="text-sm font-semibold">
+              <h3 className="text-sm font-semibold text-[#F5F6F5]">
                 No expenses found
               </h3>
 
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-[#A1A1A4]">
                 Create your first expense to get started.
               </p>
             </div>
@@ -130,31 +148,31 @@ const ExpensesPage = () => {
         {!isLoading && !error && expenses.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b">
+              <thead className="border-b border-white/10 text-[#F5F6F5]">
                 <tr>
-                  <th className="px-6 py-4 font-medium">
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">
                     Description
                   </th>
 
-                  <th className="px-6 py-4 font-medium">
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">
                     Amount
                   </th>
 
-                  <th className="px-6 py-4 font-medium">
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">
                     Submitted By
                   </th>
 
-                  <th className="px-6 py-4 font-medium">
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">
                     Status
                   </th>
 
-                  <th className="px-6 py-4 font-medium">
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">
                     Date
                   </th>
                 </tr>
               </thead>
 
-              <tbody>
+              <tbody className="divide-y divide-white/10">
                 {expenses.map((expense) => (
                   <tr
                     key={expense.id}
@@ -167,26 +185,28 @@ const ExpensesPage = () => {
                     }}
                     role="link"
                     tabIndex={0}
-                    className="cursor-pointer border-b outline-none hover:bg-gray-50 focus-visible:bg-gray-50 last:border-0"
+                    className="cursor-pointer border-b border-white/10 outline-none hover:bg-white/5 focus-visible:bg-white/5 transition-colors last:border-0"
                   >
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 font-medium text-[#F5F6F5]">
                       {expense.description}
                     </td>
 
-                    <td className="px-6 py-4">
-                      {expense.amount}
+                    <td className="px-6 py-4 font-semibold text-[#F5F6F5]">
+                      {formatAmount(expense.amount)}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 font-medium text-[#F5F6F5]">
                       {expense.submittedBy}
                     </td>
 
                     <td className="px-6 py-4">
-                      {expense.status}
+                      <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-black shadow-sm">
+                        {statusLabels[expense.status] || expense.status}
+                      </span>
                     </td>
 
-                    <td className="px-6 py-4">
-                      {expense.createdAt}
+                    <td className="px-6 py-4 text-[#A1A1A4]">
+                      {formatDate(expense.createdAt)}
                     </td>
                   </tr>
                 ))}

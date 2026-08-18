@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { canApproveExpenses } from "@/services/auth/authService";
 import { expenseService } from "@/services/expense/expenseService";
 import type { Expense, ExpenseStatus } from "@/types/expense";
+import { formatAmount, formatDate, statusLabels } from "@/utils/expenseUtils";
 
 const actionableStatuses: ExpenseStatus[] = ["PENDING", "IN_REVIEW"];
 
@@ -31,21 +32,6 @@ const getErrorMessage = (error: unknown, action: "load" | "approve" | "reject") 
   return action === "load"
     ? "Unable to load approvals. Please try again."
     : `Unable to ${action} this expense. Please try again.`;
-};
-
-const formatAmount = (amount: number) =>
-  new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(amount);
-
-const formatDate = (createdAt: string) => {
-  const date = new Date(createdAt);
-
-  return Number.isNaN(date.getTime())
-    ? createdAt
-    : new Intl.DateTimeFormat("en-IN", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      }).format(date);
 };
 
 const ApprovalsPage = () => {
@@ -123,71 +109,96 @@ const ApprovalsPage = () => {
     }
   };
 
+  const darkSlateCardStyle = {
+    background: "#14171F",
+    borderRadius: "16px",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+  };
+
   return (
     <div className="space-y-8">
+      {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Approvals</h1>
-        <p className="mt-2 text-sm text-gray-500">
+        <h1 className="text-3xl font-bold tracking-tight text-[#F5F6F5]">
+          Approvals
+        </h1>
+        <p className="mt-2 text-sm text-[#A1A1A4]">
           Review expense submissions that are awaiting a decision.
         </p>
       </div>
 
-      <div className="rounded-lg border bg-white">
-        <div className="border-b p-6">
-          <h2 className="text-lg font-semibold">Pending Approvals</h2>
-          <p className="mt-1 text-sm text-gray-500">
+      {/* Main Dark Slate Card Container */}
+      <div
+        className="overflow-hidden shadow-xl"
+        style={darkSlateCardStyle}
+      >
+        <div className="border-b border-white/[0.08] p-6">
+          <h2 className="text-lg font-bold text-[#F5F6F5]">
+            Pending Approvals
+          </h2>
+          <p className="mt-1 text-sm text-[#A1A1A4]">
             Review expense details before making an approval decision.
           </p>
         </div>
 
         {isLoading && (
           <div className="flex min-h-48 items-center justify-center p-6">
-            <p className="text-sm text-gray-500">Loading approvals...</p>
+            <p className="text-sm text-[#A1A1A4]">Loading approvals...</p>
           </div>
         )}
 
         {!isLoading && error && (
           <div className="flex min-h-48 items-center justify-center p-6">
-            <p className="text-sm text-red-500" role="alert">{error}</p>
+            <p className="text-sm text-red-400" role="alert">{error}</p>
           </div>
         )}
 
         {!isLoading && !error && approvals.length === 0 && (
           <div className="flex min-h-48 items-center justify-center p-6">
-            <p className="text-sm text-gray-500">No pending approvals.</p>
+            <p className="text-sm text-[#A1A1A4]">
+              No pending approvals.
+            </p>
           </div>
         )}
 
         {!isLoading && !error && approvals.length > 0 && (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="border-b">
+              <thead className="border-b border-white/[0.08] text-[#F5F6F5]">
                 <tr>
-                  <th className="px-6 py-4 font-medium">Description</th>
-                  <th className="px-6 py-4 font-medium">Amount</th>
-                  <th className="px-6 py-4 font-medium">Submitted By</th>
-                  <th className="px-6 py-4 font-medium">Status</th>
-                  <th className="px-6 py-4 font-medium">Date</th>
-                  <th className="px-6 py-4 font-medium">Actions</th>
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">Description</th>
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">Amount</th>
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">Submitted By</th>
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">Status</th>
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">Date</th>
+                  <th className="px-6 py-4 font-bold text-[#F5F6F5]">Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-white/[0.08]">
                 {approvals.map((expense) => {
                   const isUpdating = updatingExpenseId === expense.id;
 
                   return (
-                    <tr key={expense.id} className="border-b last:border-0">
-                      <td className="px-6 py-4">{expense.description}</td>
-                      <td className="px-6 py-4">{formatAmount(expense.amount)}</td>
-                      <td className="px-6 py-4">{expense.submittedBy}</td>
-                      <td className="px-6 py-4">{expense.status}</td>
-                      <td className="px-6 py-4">{formatDate(expense.createdAt)}</td>
+                    <tr
+                      key={expense.id}
+                      className="border-b border-white/[0.08] last:border-0 hover:bg-white/[0.05] transition-colors"
+                      style={{ background: "rgba(255, 255, 255, 0.03)" }}
+                    >
+                      <td className="px-6 py-4 font-medium text-[#F5F6F5]">{expense.description}</td>
+                      <td className="px-6 py-4 font-semibold text-[#F5F6F5]">{formatAmount(expense.amount)}</td>
+                      <td className="px-6 py-4 text-[#F5F6F5]">{expense.submittedBy}</td>
                       <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-2">
+                        <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-black shadow-sm">
+                          {statusLabels[expense.status] || expense.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-[#A1A1A4]">{formatDate(expense.createdAt)}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap items-center gap-2">
                           <button
                             type="button"
                             onClick={() => navigate(`/expenses/${expense.id}`)}
-                            className="rounded-md border px-3 py-2 text-sm font-medium hover:bg-gray-50"
+                            className="rounded-xl border border-white/15 px-3 py-1.5 text-xs font-semibold text-[#F5F6F5] hover:bg-white/10 transition-colors cursor-pointer"
                           >
                             View details
                           </button>
@@ -197,7 +208,7 @@ const ApprovalsPage = () => {
                                 type="button"
                                 disabled={updatingExpenseId !== null}
                                 onClick={() => handleAction(expense, "approve")}
-                                className="rounded-md bg-black px-3 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="rounded-xl bg-white px-3.5 py-1.5 text-xs font-semibold text-black hover:opacity-90 transition-opacity shadow-sm disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                               >
                                 {isUpdating ? "Updating..." : "Approve"}
                               </button>
@@ -205,7 +216,7 @@ const ApprovalsPage = () => {
                                 type="button"
                                 disabled={updatingExpenseId !== null}
                                 onClick={() => handleAction(expense, "reject")}
-                                className="rounded-md border px-3 py-2 text-sm font-medium hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="rounded-xl border border-white/20 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-white/10 transition-colors disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
                               >
                                 {isUpdating ? "Updating..." : "Reject"}
                               </button>

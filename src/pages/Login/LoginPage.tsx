@@ -1,38 +1,17 @@
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import { loginSchema } from "@/schemas/auth.schema";
-import type { LoginFormData } from "@/schemas/auth.schema";
 import { login } from "@/services/auth/authService";
+import GlassmorphismLoginCard from "@/components/GlassmorphismLoginCard";
+import AnoAI from "@/components/ui/animated-shader-background";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-  });
-
-  const onSubmit = async (data: LoginFormData) => {
+  const handleLogin = async (data: { email: string; password: string }) => {
     setLoginError(null);
+    setIsLoading(true);
 
     try {
       const { accessToken, refreshToken, tokenType } = await login(data);
@@ -44,98 +23,44 @@ const LoginPage = () => {
       navigate("/dashboard");
     } catch {
       setLoginError("Invalid email or password. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleGoogleLogin = () => {
+    console.log("Google Login clicked");
+  };
+
+  const handleForgotPassword = () => {
+    console.log("Forgot Password clicked");
+  };
+
+  const handleSignUp = () => {
+    console.log("Sign Up clicked");
+  };
+
   return (
-    <div className="w-full max-w-md">
-     
-      <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-black">
-          Logo
-        </div>
-
-        <h1 className="text-3xl font-bold tracking-tight">
-          Expense Approval System
-        </h1>
-
-        <p className="mt-2 text-sm text-gray-500">
-          Secure Enterprise Expense Management
-        </p>
+    <div className="relative min-h-screen w-full flex items-center justify-center">
+      {/* 1. WebGL Animated Shader Background */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <AnoAI />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Sign In</CardTitle>
+      {/* 2. Dark Frosted Overlay Layer for contrast */}
+      <div className="fixed inset-0 bg-[#060403]/30 backdrop-blur-xs z-10 pointer-events-none" />
 
-          <CardDescription>
-            Access your enterprise workspace
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="space-y-5"
-          >
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">
-                Email
-              </label>
-
-              <Input
-                type="email"
-                placeholder="Enter your email"
-                {...register("email")}
-              />
-
-              {errors.email && (
-                <p className="text-sm text-red-500">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-sm font-medium">
-                Password
-              </label>
-
-              <Input
-                type="password"
-                placeholder="Enter your password"
-                {...register("password")}
-              />
-
-              {errors.password && (
-                <p className="text-sm text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Signing In..." : "Sign In"}
-            </Button>
-
-            {loginError && (
-              <p className="text-sm text-red-500" role="alert">
-                {loginError}
-              </p>
-            )}
-          </form>
-        </CardContent>
-
-        <CardFooter className="justify-center">
-          <button
-            type="button"
-            className="text-sm text-gray-500 hover:text-black"
-          >
-            Forgot Password?
-          </button>
-        </CardFooter>
-      </Card>
+      {/* 3. Glass Login Card Layer */}
+      <div className="relative z-20 flex items-center justify-center p-4 w-full">
+        <GlassmorphismLoginCard
+          onLogin={handleLogin}
+          onGoogleLogin={handleGoogleLogin}
+          onForgotPassword={handleForgotPassword}
+          onSignUp={handleSignUp}
+          isLoading={isLoading}
+          errorMessage={loginError}
+        />
+      </div>
     </div>
   );
 };
