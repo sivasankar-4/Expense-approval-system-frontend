@@ -72,3 +72,84 @@ export const canApproveExpenses = (): boolean =>
   getAccessTokenRoles().some((role) =>
     approvalRoles.has(role.replace(/^ROLE_/, "").toUpperCase()),
   );
+
+export interface UserClaims {
+  email?: string;
+  sub?: string;
+  name?: string;
+  fullName?: string;
+  tenantName?: string;
+  tenantId?: string | number;
+  roles: string[];
+  issuedAt?: string;
+  expiresAt?: string;
+}
+
+export const getAuthUserClaims = (): UserClaims | null => {
+  const accessToken = localStorage.getItem("accessToken");
+  if (!accessToken) return null;
+
+  try {
+    const payload = accessToken.split(".")[1];
+    if (!payload) return null;
+
+    const claims = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/"))
+    ) as Record<string, unknown>;
+
+    if (!claims || typeof claims !== "object") return null;
+
+    const roles = getAccessTokenRoles();
+    const email =
+      typeof claims.sub === "string" && claims.sub.includes("@")
+        ? claims.sub
+        : typeof claims.email === "string"
+        ? claims.email
+        : undefined;
+
+    const rawName =
+      typeof claims.name === "string"
+        ? claims.name
+        : typeof claims.fullName === "string"
+        ? claims.fullName
+        : email
+        ? email.split("@")[0]
+        : undefined;
+
+    const tenantName =
+      typeof claims.tenantName === "string"
+        ? claims.tenantName
+        : typeof claims.tenant === "string"
+        ? claims.tenant
+        : typeof claims.organization === "string"
+        ? claims.organization
+        : undefined;
+
+    const tenantId =
+      typeof claims.tenantId === "string" || typeof claims.tenantId === "number"
+        ? claims.tenantId
+        : undefined;
+
+    const formatDateVal = (timestamp: unknown): string | undefined => {
+      if (typeof timestamp === "number") {
+        return new Date(timestamp * 1000).toLocaleString();
+      }
+      return undefined;
+    };
+
+    return {
+      email,
+      sub: typeof claims.sub === "string" ? claims.sub : undefined,
+      name: rawName,
+      fullName: rawName,
+      tenantName,
+      tenantId,
+      roles,
+      issuedAt: formatDateVal(claims.iat),
+      expiresAt: formatDateVal(claims.exp),
+    };
+  } catch {
+    return null;
+  }
+};
+
