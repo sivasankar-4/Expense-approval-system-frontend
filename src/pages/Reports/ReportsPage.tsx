@@ -8,7 +8,6 @@ import {
   calculateExpenseStats,
   formatAmount,
   formatDate,
-  statusClasses,
   statusLabels,
 } from "@/utils/expenseUtils";
 
@@ -75,13 +74,24 @@ const ReportsPage = () => {
     };
   }, [expenses]);
 
+  const darkGlassCardStyle = {
+    background: "rgba(20, 23, 31, 0.75)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255, 255, 255, 0.12)",
+    boxShadow: "0 8px 32px 0 rgba(0, 0, 0, 0.37)",
+    borderRadius: "20px",
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Reports & Analytics</h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <h1 className="text-3xl font-bold tracking-tight text-[#F5F6F5] [text-shadow:_0_2px_4px_rgba(0,0,0,0.5)]">
+            Reports & Analytics
+          </h1>
+          <p className="mt-2 text-sm text-[#A1A1A4]">
             Financial summary and status breakdown of organization expenses.
           </p>
         </div>
@@ -89,7 +99,7 @@ const ReportsPage = () => {
         <button
           type="button"
           onClick={() => navigate("/expenses")}
-          className="rounded-md border px-4 py-2 text-sm font-medium hover:bg-gray-50 self-start"
+          className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90 transition-opacity shadow-md cursor-pointer self-start"
         >
           View All Expenses
         </button>
@@ -97,19 +107,25 @@ const ReportsPage = () => {
 
       {/* Loading State */}
       {isLoading && (
-        <div className="flex min-h-64 items-center justify-center rounded-lg border bg-white p-6">
-          <p className="text-sm text-gray-500">Loading expense report data...</p>
+        <div
+          className="flex min-h-64 items-center justify-center p-6"
+          style={darkGlassCardStyle}
+        >
+          <p className="text-sm text-[#A1A1A4]">Loading expense report data...</p>
         </div>
       )}
 
       {/* Error State */}
       {!isLoading && error && (
-        <div className="rounded-lg border border-red-200 bg-white p-6 text-center">
-          <p className="text-sm font-medium text-red-600" role="alert">{error}</p>
+        <div
+          className="p-6 text-center"
+          style={darkGlassCardStyle}
+        >
+          <p className="text-sm font-medium text-red-400" role="alert">{error}</p>
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="mt-4 rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+            className="mt-4 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90 transition-opacity cursor-pointer shadow-md"
           >
             Retry
           </button>
@@ -118,10 +134,15 @@ const ReportsPage = () => {
 
       {/* Empty State */}
       {!isLoading && !error && expenses.length === 0 && (
-        <div className="flex min-h-64 items-center justify-center rounded-lg border bg-white p-6">
+        <div
+          className="flex min-h-64 items-center justify-center p-6"
+          style={darkGlassCardStyle}
+        >
           <div className="text-center">
-            <h3 className="text-base font-semibold">No expense data available</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="text-base font-bold text-[#F5F6F5]">
+              No expense data available
+            </h3>
+            <p className="mt-1 text-sm text-[#A1A1A4]">
               There are currently no expenses submitted in the system to generate reports.
             </p>
           </div>
@@ -133,65 +154,92 @@ const ReportsPage = () => {
         <>
           {/* Summary Cards Grid */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-lg border bg-white p-6">
-              <p className="text-sm font-medium text-gray-500">Total Expenses</p>
-              <p className="mt-2 text-3xl font-bold">{stats.totalCount}</p>
-              <p className="mt-1 text-xs text-gray-400">Total submitted records</p>
+            <div
+              className="p-6 transition-all duration-200 hover:border-white/30"
+              style={darkGlassCardStyle}
+            >
+              <p className="text-sm font-medium text-[#A1A1A4]">Total Expenses</p>
+              <p className="mt-2 text-3xl font-bold tracking-tight text-[#F5F6F5] [text-shadow:_0_1px_3px_rgba(0,0,0,0.4)]">
+                {stats.totalCount}
+              </p>
+              <p className="mt-1 text-xs text-[#A1A1A4]">Total submitted records</p>
             </div>
 
-            <div className="rounded-lg border bg-white p-6">
-              <p className="text-sm font-medium text-gray-500">Total Expense Amount</p>
-              <p className="mt-2 text-3xl font-bold">{formatAmount(stats.totalAmount)}</p>
-              <p className="mt-1 text-xs text-gray-400">Cumulative monetary value</p>
+            <div
+              className="p-6 transition-all duration-200 hover:border-white/30"
+              style={darkGlassCardStyle}
+            >
+              <p className="text-sm font-medium text-[#A1A1A4]">Total Expense Amount</p>
+              <p className="mt-2 text-3xl font-bold tracking-tight text-[#F5F6F5] [text-shadow:_0_1px_3px_rgba(0,0,0,0.4)]">
+                {formatAmount(stats.totalAmount)}
+              </p>
+              <p className="mt-1 text-xs text-[#A1A1A4]">Cumulative monetary value</p>
             </div>
 
-            <div className="rounded-lg border bg-white p-6">
-              <p className="text-sm font-medium text-gray-500">Approved Amount</p>
-              <p className="mt-2 text-3xl font-bold">
+            <div
+              className="p-6 transition-all duration-200 hover:border-white/30"
+              style={darkGlassCardStyle}
+            >
+              <p className="text-sm font-medium text-[#A1A1A4]">Approved Amount</p>
+              <p className="mt-2 text-3xl font-bold tracking-tight text-[#F5F6F5] [text-shadow:_0_1px_3px_rgba(0,0,0,0.4)]">
                 {formatAmount(stats.statusBreakdown.APPROVED.amount)}
               </p>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-[#A1A1A4]">
                 {stats.statusBreakdown.APPROVED.count} expense(s) approved (
                 {stats.statusBreakdown.APPROVED.amountPercentage}% of total)
               </p>
             </div>
 
-            <div className="rounded-lg border bg-white p-6">
-              <p className="text-sm font-medium text-gray-500">Pending Approvals</p>
-              <p className="mt-2 text-3xl font-bold">
+            <div
+              className="p-6 transition-all duration-200 hover:border-white/30"
+              style={darkGlassCardStyle}
+            >
+              <p className="text-sm font-medium text-[#A1A1A4]">Pending Approvals</p>
+              <p className="mt-2 text-3xl font-bold tracking-tight text-[#F5F6F5] [text-shadow:_0_1px_3px_rgba(0,0,0,0.4)]">
                 {formatAmount(stats.statusBreakdown.PENDING.amount)}
               </p>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-[#A1A1A4]">
                 {stats.statusBreakdown.PENDING.count} expense(s) pending decision
               </p>
             </div>
 
-            <div className="rounded-lg border bg-white p-6">
-              <p className="text-sm font-medium text-gray-500">In Review</p>
-              <p className="mt-2 text-3xl font-bold">
+            <div
+              className="p-6 transition-all duration-200 hover:border-white/30"
+              style={darkGlassCardStyle}
+            >
+              <p className="text-sm font-medium text-[#A1A1A4]">In Review</p>
+              <p className="mt-2 text-3xl font-bold tracking-tight text-[#F5F6F5] [text-shadow:_0_1px_3px_rgba(0,0,0,0.4)]">
                 {formatAmount(stats.statusBreakdown.IN_REVIEW.amount)}
               </p>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-[#A1A1A4]">
                 {stats.statusBreakdown.IN_REVIEW.count} expense(s) under review
               </p>
             </div>
 
-            <div className="rounded-lg border bg-white p-6">
-              <p className="text-sm font-medium text-gray-500">Rejected Amount</p>
-              <p className="mt-2 text-3xl font-bold">
+            <div
+              className="p-6 transition-all duration-200 hover:border-white/30"
+              style={darkGlassCardStyle}
+            >
+              <p className="text-sm font-medium text-[#A1A1A4]">Rejected Amount</p>
+              <p className="mt-2 text-3xl font-bold tracking-tight text-[#F5F6F5] [text-shadow:_0_1px_3px_rgba(0,0,0,0.4)]">
                 {formatAmount(stats.statusBreakdown.REJECTED.amount)}
               </p>
-              <p className="mt-1 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-[#A1A1A4]">
                 {stats.statusBreakdown.REJECTED.count} expense(s) rejected
               </p>
             </div>
           </div>
 
           {/* Status Breakdown Section */}
-          <div className="rounded-lg border bg-white">
-            <div className="border-b p-6">
-              <h2 className="text-lg font-semibold">Expense Status Breakdown</h2>
-              <p className="mt-1 text-sm text-gray-500">
+          <div
+            className="overflow-hidden"
+            style={darkGlassCardStyle}
+          >
+            <div className="border-b border-white/10 p-6">
+              <h2 className="text-lg font-bold text-[#F5F6F5] [text-shadow:_0_1px_3px_rgba(0,0,0,0.4)]">
+                Expense Status Breakdown
+              </h2>
+              <p className="mt-1 text-sm text-[#A1A1A4]">
                 Detailed metrics by expense approval state.
               </p>
             </div>
@@ -199,34 +247,32 @@ const ReportsPage = () => {
             <div className="p-6">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="border-b bg-gray-50">
+                  <thead className="border-b border-white/10 text-[#F5F6F5]">
                     <tr>
-                      <th className="px-4 py-3 font-medium text-gray-600">Status</th>
-                      <th className="px-4 py-3 font-medium text-gray-600">Count</th>
-                      <th className="px-4 py-3 font-medium text-gray-600">Count %</th>
-                      <th className="px-4 py-3 font-medium text-gray-600">Total Amount</th>
-                      <th className="px-4 py-3 font-medium text-gray-600">Amount %</th>
-                      <th className="px-4 py-3 font-medium text-gray-600 w-1/4">Distribution</th>
+                      <th className="px-4 py-3 font-bold text-[#F5F6F5]">Status</th>
+                      <th className="px-4 py-3 font-bold text-[#F5F6F5]">Count</th>
+                      <th className="px-4 py-3 font-bold text-[#F5F6F5]">Count %</th>
+                      <th className="px-4 py-3 font-bold text-[#F5F6F5]">Total Amount</th>
+                      <th className="px-4 py-3 font-bold text-[#F5F6F5]">Amount %</th>
+                      <th className="px-4 py-3 font-bold text-[#F5F6F5] w-1/4">Distribution</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-white/10">
                     {stats.statusList.map((item) => (
-                      <tr key={item.status} className="border-b last:border-0">
+                      <tr key={item.status} className="border-b border-white/10 last:border-0 hover:bg-white/5 transition-colors">
                         <td className="px-4 py-3 font-medium">
-                          <span
-                            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${statusClasses[item.status]}`}
-                          >
+                          <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-black shadow-sm">
                             {statusLabels[item.status]}
                           </span>
                         </td>
-                        <td className="px-4 py-3 font-medium">{item.count}</td>
-                        <td className="px-4 py-3 text-gray-500">{item.countPercentage}%</td>
-                        <td className="px-4 py-3 font-medium">{formatAmount(item.amount)}</td>
-                        <td className="px-4 py-3 text-gray-500">{item.amountPercentage}%</td>
+                        <td className="px-4 py-3 font-semibold text-[#F5F6F5]">{item.count}</td>
+                        <td className="px-4 py-3 font-medium text-[#F5F6F5]">{item.countPercentage}%</td>
+                        <td className="px-4 py-3 font-semibold text-[#F5F6F5]">{formatAmount(item.amount)}</td>
+                        <td className="px-4 py-3 font-medium text-[#F5F6F5]">{item.amountPercentage}%</td>
                         <td className="px-4 py-3">
-                          <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                          <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
                             <div
-                              className="bg-black h-2 rounded-full"
+                              className="bg-[#F5F6F5] h-2 rounded-full transition-all duration-300 shadow-sm"
                               style={{ width: `${item.amountPercentage}%` }}
                             />
                           </div>
@@ -240,17 +286,29 @@ const ReportsPage = () => {
           </div>
 
           {/* Category Notice */}
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs text-gray-500">
-            <span className="font-semibold text-gray-700">Note: </span>
+          <div
+            className="p-4 text-xs rounded-r-xl"
+            style={{
+              background: "rgba(255, 255, 255, 0.03)",
+              borderLeft: "3px solid #B13A29",
+              color: "#A1A1A4",
+            }}
+          >
+            <span className="font-bold text-[#F5F6F5]">Note: </span>
             Category breakdown is omitted because the current backend response model (`Expense`) does not include a `category` field.
           </div>
 
           {/* Recent Expenses Table */}
-          <div className="rounded-lg border bg-white">
-            <div className="border-b p-6 flex justify-between items-center">
+          <div
+            className="overflow-hidden"
+            style={darkGlassCardStyle}
+          >
+            <div className="border-b border-white/10 p-6 flex justify-between items-center">
               <div>
-                <h2 className="text-lg font-semibold">Recent Expense Activity</h2>
-                <p className="mt-1 text-sm text-gray-500">
+                <h2 className="text-lg font-bold text-[#F5F6F5] [text-shadow:_0_1px_3px_rgba(0,0,0,0.4)]">
+                  Recent Expense Activity
+                </h2>
+                <p className="mt-1 text-sm text-[#A1A1A4]">
                   Top 10 recent submissions included in this report.
                 </p>
               </div>
@@ -258,29 +316,27 @@ const ReportsPage = () => {
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="border-b">
+                <thead className="border-b border-white/10 text-[#F5F6F5]">
                   <tr>
-                    <th className="px-6 py-4 font-medium">Description</th>
-                    <th className="px-6 py-4 font-medium">Amount</th>
-                    <th className="px-6 py-4 font-medium">Submitted By</th>
-                    <th className="px-6 py-4 font-medium">Status</th>
-                    <th className="px-6 py-4 font-medium">Date</th>
+                    <th className="px-6 py-4 font-bold text-[#F5F6F5]">Description</th>
+                    <th className="px-6 py-4 font-bold text-[#F5F6F5]">Amount</th>
+                    <th className="px-6 py-4 font-bold text-[#F5F6F5]">Submitted By</th>
+                    <th className="px-6 py-4 font-bold text-[#F5F6F5]">Status</th>
+                    <th className="px-6 py-4 font-bold text-[#F5F6F5]">Date</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-white/10">
                   {recentExpenses.map((expense) => (
-                    <tr key={expense.id} className="border-b last:border-0 hover:bg-gray-50/50">
-                      <td className="px-6 py-4 font-medium">{expense.description}</td>
-                      <td className="px-6 py-4">{formatAmount(expense.amount)}</td>
-                      <td className="px-6 py-4 text-gray-600">{expense.submittedBy}</td>
+                    <tr key={expense.id} className="border-b border-white/10 last:border-0 hover:bg-white/5 transition-colors">
+                      <td className="px-6 py-4 font-medium text-[#F5F6F5]">{expense.description}</td>
+                      <td className="px-6 py-4 font-semibold text-[#F5F6F5]">{formatAmount(expense.amount)}</td>
+                      <td className="px-6 py-4 font-medium text-[#F5F6F5]">{expense.submittedBy}</td>
                       <td className="px-6 py-4">
-                        <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${statusClasses[expense.status]}`}
-                        >
+                        <span className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-semibold text-black shadow-sm">
                           {statusLabels[expense.status]}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-gray-500">{formatDate(expense.createdAt)}</td>
+                      <td className="px-6 py-4 text-[#A1A1A4]">{formatDate(expense.createdAt)}</td>
                     </tr>
                   ))}
                 </tbody>
