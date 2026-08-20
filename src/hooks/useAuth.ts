@@ -1,4 +1,4 @@
-import { getAccessTokenRoles } from "@/services/auth/authService";
+import { getAccessTokenRoles, getAuthUserClaims } from "@/services/auth/authService";
 import { ROLES } from "@/constants/roles";
 
 /**
@@ -11,6 +11,7 @@ export const useAuth = () => {
 
   // Compute role set – fallback to empty array if token missing/invalid.
   const tokenRoles = getAccessTokenRoles();
+  const claims = getAuthUserClaims();
 
   // Determine the highest‑privilege role present.
   const role = (() => {
@@ -20,5 +21,18 @@ export const useAuth = () => {
     return undefined;
   })();
 
-  return { isAuthenticated, role, tokenRoles };
+  const user = claims
+    ? {
+        email: claims.email || claims.sub || "User",
+        name: claims.name || claims.fullName || (claims.email ? claims.email.split("@")[0] : "User"),
+        role: role || "EMPLOYEE",
+        tenantName: claims.tenantName,
+        tenantId: claims.tenantId,
+        issuedAt: claims.issuedAt,
+        expiresAt: claims.expiresAt,
+      }
+    : null;
+
+  return { isAuthenticated, role, tokenRoles, user, claims };
 };
+
