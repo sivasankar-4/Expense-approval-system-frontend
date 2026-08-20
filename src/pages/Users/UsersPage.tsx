@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
 import { isAxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 import { userService } from "@/services/user/userService";
 import type { User } from "@/types/user";
 import { formatDate } from "@/utils/expenseUtils";
-
-const roleBadgeClasses: Record<string, string> = {
-  FINANCE_ADMIN: "bg-black text-white",
-  MANAGER: "bg-gray-200 text-gray-800 border border-gray-400",
-  EMPLOYEE: "bg-gray-100 text-gray-700 border border-gray-300",
-};
 
 const roleLabels: Record<string, string> = {
   FINANCE_ADMIN: "Finance Admin",
@@ -36,6 +31,7 @@ const getErrorMessage = (error: unknown): string => {
 };
 
 const UsersPage = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,33 +65,45 @@ const UsersPage = () => {
     };
   }, []);
 
+  const darkSlateCardStyle = {
+    background: "#14171F",
+    borderRadius: "16px",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+  };
+
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">User Administration</h1>
-          <p className="mt-2 text-sm text-gray-500">
-            Manage organization team members and access control roles.
-          </p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight text-[#F5F6F5]">
+          User Administration
+        </h1>
+        <p className="mt-2 text-sm text-[#A1A1A4]">
+          Manage organization team members and access control roles.
+        </p>
       </div>
 
       {/* Loading State */}
       {isLoading && (
-        <div className="flex min-h-64 items-center justify-center rounded-lg border bg-white p-6">
-          <p className="text-sm text-gray-500">Loading organization users...</p>
+        <div
+          className="flex min-h-64 items-center justify-center p-6 shadow-xl"
+          style={darkSlateCardStyle}
+        >
+          <p className="text-sm text-[#A1A1A4]">Loading organization users...</p>
         </div>
       )}
 
       {/* Error State */}
       {!isLoading && error && (
-        <div className="rounded-lg border border-red-200 bg-white p-6 text-center">
-          <p className="text-sm font-medium text-red-600" role="alert">{error}</p>
+        <div
+          className="p-6 text-center shadow-xl"
+          style={darkSlateCardStyle}
+        >
+          <p className="text-sm font-medium text-red-400" role="alert">{error}</p>
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="mt-4 rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+            className="mt-4 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-black hover:opacity-90 transition-opacity shadow-sm cursor-pointer"
           >
             Retry
           </button>
@@ -104,10 +112,13 @@ const UsersPage = () => {
 
       {/* Empty State */}
       {!isLoading && !error && users.length === 0 && (
-        <div className="flex min-h-64 items-center justify-center rounded-lg border bg-white p-6">
+        <div
+          className="flex min-h-64 items-center justify-center p-6 shadow-xl"
+          style={darkSlateCardStyle}
+        >
           <div className="text-center">
-            <h3 className="text-base font-semibold">No users found</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="text-base font-bold text-[#F5F6F5]">No users found</h3>
+            <p className="mt-1 text-sm text-[#A1A1A4]">
               There are currently no user accounts associated with your tenant organization.
             </p>
           </div>
@@ -117,11 +128,16 @@ const UsersPage = () => {
       {/* User Table & Details */}
       {!isLoading && !error && users.length > 0 && (
         <>
-          <div className="rounded-lg border bg-white">
-            <div className="border-b p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <div
+            className="overflow-hidden shadow-xl"
+            style={darkSlateCardStyle}
+          >
+            <div className="border-b border-white/[0.08] p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <div>
-                <h2 className="text-lg font-semibold">Team Members ({users.length})</h2>
-                <p className="mt-1 text-sm text-gray-500">
+                <h2 className="text-lg font-bold text-[#F5F6F5]">
+                  Team Members ({users.length})
+                </h2>
+                <p className="mt-1 text-sm text-[#A1A1A4]">
                   Users registered under your organization tenant.
                 </p>
               </div>
@@ -129,48 +145,45 @@ const UsersPage = () => {
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm">
-                <thead className="border-b bg-gray-50">
+                <thead className="border-b border-white/[0.08] text-[#F5F6F5]">
                   <tr>
-                    <th className="px-6 py-4 font-medium text-gray-600">User / Name</th>
-                    <th className="px-6 py-4 font-medium text-gray-600">Email</th>
-                    <th className="px-6 py-4 font-medium text-gray-600">Role</th>
+                    <th className="px-6 py-4 font-bold text-[#F5F6F5]">User / Name</th>
+                    <th className="px-6 py-4 font-bold text-[#F5F6F5]">Email</th>
+                    <th className="px-6 py-4 font-bold text-[#F5F6F5]">Role</th>
                     {users.some((u) => u.status) && (
-                      <th className="px-6 py-4 font-medium text-gray-600">Status</th>
+                      <th className="px-6 py-4 font-bold text-[#F5F6F5]">Status</th>
                     )}
                     {users.some((u) => u.tenantName) && (
-                      <th className="px-6 py-4 font-medium text-gray-600">Tenant</th>
+                      <th className="px-6 py-4 font-bold text-[#F5F6F5]">Tenant</th>
                     )}
                     {users.some((u) => u.createdAt) && (
-                      <th className="px-6 py-4 font-medium text-gray-600">Created At</th>
+                      <th className="px-6 py-4 font-bold text-[#F5F6F5]">Created At</th>
                     )}
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-white/[0.08]">
                   {users.map((user) => {
                     const displayName = user.fullName || user.name || user.email.split("@")[0];
                     const roleKey = String(user.role).replace(/^ROLE_/, "").toUpperCase();
-                    const badgeClass = roleBadgeClasses[roleKey] || "bg-gray-100 text-gray-700";
                     const roleLabel = roleLabels[roleKey] || roleKey;
 
                     return (
-                      <tr key={user.id} className="border-b last:border-0 hover:bg-gray-50/50">
-                        <td className="px-6 py-4 font-medium text-gray-900">{displayName}</td>
-                        <td className="px-6 py-4 text-gray-600">{user.email}</td>
+                      <tr key={user.id} className="border-b border-white/[0.08] last:border-0 hover:bg-white/[0.03] transition-colors">
+                        <td className="px-6 py-4 font-semibold text-[#F5F6F5]">{displayName}</td>
+                        <td className="px-6 py-4 font-medium text-[#F5F6F5]">{user.email}</td>
                         <td className="px-6 py-4">
-                          <span
-                            className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${badgeClass}`}
-                          >
+                          <span className="inline-flex rounded-full bg-white/10 text-white border border-white/15 px-3 py-1 text-xs font-semibold">
                             {roleLabel}
                           </span>
                         </td>
                         {users.some((u) => u.status) && (
-                          <td className="px-6 py-4 text-gray-600">{user.status || "Active"}</td>
+                          <td className="px-6 py-4 text-[#F5F6F5]">{user.status || "Active"}</td>
                         )}
                         {users.some((u) => u.tenantName) && (
-                          <td className="px-6 py-4 text-gray-600">{user.tenantName}</td>
+                          <td className="px-6 py-4 text-[#F5F6F5]">{user.tenantName}</td>
                         )}
                         {users.some((u) => u.createdAt) && (
-                          <td className="px-6 py-4 text-gray-500">
+                          <td className="px-6 py-4 text-[#A1A1A4]">
                             {user.createdAt ? formatDate(user.createdAt) : "—"}
                           </td>
                         )}
@@ -182,8 +195,18 @@ const UsersPage = () => {
             </div>
           </div>
 
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-xs text-gray-500">
-            <span className="font-semibold text-gray-700">Note: </span>
+          <div
+            className="p-4 text-xs rounded-r-xl"
+            style={{
+              background: "rgba(255, 255, 255, 0.03)",
+              borderLeft: "3px solid #B13A29",
+              borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+              borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+              color: "#A1A1A4",
+            }}
+          >
+            <span className="font-bold text-[#F5F6F5]">Note: </span>
             User management actions (Create / Edit / Deactivate User) are not enabled because the backend REST API currently only exposes a read-only user listing endpoint (`GET /users`).
           </div>
         </>
