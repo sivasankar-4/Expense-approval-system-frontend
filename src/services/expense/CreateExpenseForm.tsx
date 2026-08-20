@@ -39,7 +39,7 @@ const CreateExpenseForm = () => {
       <div>
         <label
           htmlFor="amount"
-          className="mb-2 block text-sm font-medium"
+          className="mb-2 block text-sm font-medium text-[#F5F6F5]"
         >
           Amount
         </label>
@@ -52,11 +52,17 @@ const CreateExpenseForm = () => {
           {...register("amount", {
             valueAsNumber: true,
           })}
-          className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2 focus:ring-black"
+          className="w-full px-4 py-2.5 text-sm placeholder-[#A1A1A4]/60 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/40"
+          style={{
+            background: "rgba(0, 0, 0, 0.4)",
+            borderRadius: "12px",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            color: "#F5F6F5",
+          }}
         />
 
         {errors.amount && (
-          <p className="mt-1 text-sm text-red-500">
+          <p className="mt-1 text-sm text-red-400">
             {errors.amount.message}
           </p>
         )}
@@ -66,7 +72,7 @@ const CreateExpenseForm = () => {
       <div>
         <label
           htmlFor="currency"
-          className="mb-2 block text-sm font-medium"
+          className="mb-2 block text-sm font-medium text-[#F5F6F5]"
         >
           Currency
         </label>
@@ -76,11 +82,17 @@ const CreateExpenseForm = () => {
           type="text"
           placeholder="e.g. Rupees"
           {...register("currency")}
-          className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2 focus:ring-black"
+          className="w-full px-4 py-2.5 text-sm placeholder-[#A1A1A4]/60 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/40"
+          style={{
+            background: "rgba(0, 0, 0, 0.4)",
+            borderRadius: "12px",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            color: "#F5F6F5",
+          }}
         />
 
         {errors.currency && (
-          <p className="mt-1 text-sm text-red-500">
+          <p className="mt-1 text-sm text-red-400">
             {errors.currency.message}
           </p>
         )}
@@ -90,7 +102,7 @@ const CreateExpenseForm = () => {
       <div>
         <label
           htmlFor="category"
-          className="mb-2 block text-sm font-medium"
+          className="mb-2 block text-sm font-medium text-[#F5F6F5]"
         >
           Category
         </label>
@@ -100,11 +112,17 @@ const CreateExpenseForm = () => {
           type="text"
           placeholder="e.g. IT"
           {...register("category")}
-          className="w-full rounded-md border px-3 py-2 outline-none focus:ring-2 focus:ring-black"
+          className="w-full px-4 py-2.5 text-sm placeholder-[#A1A1A4]/60 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/40"
+          style={{
+            background: "rgba(0, 0, 0, 0.4)",
+            borderRadius: "12px",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            color: "#F5F6F5",
+          }}
         />
 
         {errors.category && (
-          <p className="mt-1 text-sm text-red-500">
+          <p className="mt-1 text-sm text-red-400">
             {errors.category.message}
           </p>
         )}
@@ -114,7 +132,7 @@ const CreateExpenseForm = () => {
       <div>
         <label
           htmlFor="description"
-          className="mb-2 block text-sm font-medium"
+          className="mb-2 block text-sm font-medium text-[#F5F6F5]"
         >
           Description
         </label>
@@ -123,11 +141,17 @@ const CreateExpenseForm = () => {
           id="description"
           placeholder="Describe the expense"
           {...register("description")}
-          className="min-h-24 w-full rounded-md border px-3 py-2 outline-none focus:ring-2 focus:ring-black"
+          className="min-h-24 w-full px-4 py-2.5 text-sm placeholder-[#A1A1A4]/60 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/40"
+          style={{
+            background: "rgba(0, 0, 0, 0.4)",
+            borderRadius: "12px",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            color: "#F5F6F5",
+          }}
         />
 
         {errors.description && (
-          <p className="mt-1 text-sm text-red-500">
+          <p className="mt-1 text-sm text-red-400">
             {errors.description.message}
           </p>
         )}
@@ -137,7 +161,7 @@ const CreateExpenseForm = () => {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full rounded-md bg-black px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black hover:opacity-90 transition-opacity shadow-sm cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting ? "Submitting..." : "Submit Expense"}
       </button>
